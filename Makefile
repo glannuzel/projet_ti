@@ -7,13 +7,16 @@ LDLIBS=\
 	-lopencv_highgui
 BIN=\
 	seuil_V0\
+	ero_dil\
 
 .PHONY: all
 all: $(BIN)
 
 .PHONY: test
 test:
-	./seuil_V0 ../data/log1/001-rgb.png
+	./seuil_V0 ../data/log1/001-rgb.png otsu-th-ocv.png
+	./ero_dil otsu-th-ocv.png carre.png
+
 
 .PHONY: clean
 clean:
