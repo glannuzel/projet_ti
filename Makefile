@@ -1,4 +1,4 @@
-CPPFLAGS=-I/opt/opencv/include
+CPPFLAGS=-I/opt/opencv/include 
 CXXFLAGS=-Wall -Wextra -Werror
 LDFLAGS=-Wl,-R/opt/opencv/lib -L/opt/opencv/lib
 LDLIBS=\
@@ -6,14 +6,10 @@ LDLIBS=\
 	-lopencv_imgproc\
 	-lopencv_highgui
 BIN=\
-	seuil_V0\
+	terrain_mask \
 
-.PHONY: all
+.PHONY: all 
 all: $(BIN)
-
-.PHONY: test
-test:
-	./seuil_V0 ../data/log1/001-rgb.png
 
 .PHONY: clean
 clean:
