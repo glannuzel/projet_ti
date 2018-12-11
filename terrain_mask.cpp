@@ -16,10 +16,10 @@ Change a channel value
  */
 void adjust_channel(Mat &image, const int shift, const int channel){
   int col_size = image.cols;
-  int row_size = image.rows;  
+  int row_size = image.rows;
   for (int i = 0; i < row_size; i++){
     for (int j = 0; j < col_size; j++){
-      Vec3b &pixel = image.at<Vec3b>(i,j);  
+      Vec3b &pixel = image.at<Vec3b>(i,j);
       if (pixel[channel] + shift <= 255)
 	pixel[channel] += shift;
       else
@@ -28,15 +28,15 @@ void adjust_channel(Mat &image, const int shift, const int channel){
   }
 }
 
-void process (const char * ims){
+void process (const char * ims, const char * imd){
   Mat image=imread(ims);
   if (!image.data){
     cout << "Error loading image" << endl;
     exit(EXIT_FAILURE);
   }
   if (image.type() != CV_8UC3)
-    image.convertTo(image, CV_8UC3);   
-  
+    image.convertTo(image, CV_8UC3);
+
   Mat hsv;
   cvtColor(image, hsv, COLOR_BGR2HSV);
   int sensibility = 25;
@@ -45,6 +45,8 @@ void process (const char * ims){
   Mat mask;
   inRange(hsv, lower_green, upper_green, mask);
   imshow("f", mask);
+  imwrite(imd, mask);
+
   waitKey(0);
 }
 
@@ -53,12 +55,11 @@ void usage (const char *s){
   exit(EXIT_FAILURE);
 }
 
-#define param 1
+#define param 2
 int main (int argc, char * argv[]){
   if (argc != (param+1)){
     usage(argv[0]);
   }
-  process(argv[1]);
+  process(argv[1], argv[2]);
   return EXIT_SUCCESS;
 }
-

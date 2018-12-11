@@ -9,7 +9,7 @@ using namespace std;
 
 
 void
-process(const char* ims, const char* stru)
+process(const char* ims, const char* imd, const char* stru)
 {
   Mat image;
   Mat stru_elmt;
@@ -33,7 +33,7 @@ process(const char* ims, const char* stru)
 
     Mat image_dest = image_gray.clone();
 
-    int nb_erosions = 5;
+    int nb_erosions = 4;
     erode(image_gray, image_dest, stru_elmt_gray, Point(-1,-1), nb_erosions);
     imshow("Image erodee",image_dest);
 
@@ -43,13 +43,13 @@ process(const char* ims, const char* stru)
 
     imshow("Image erodee puis dilatee",image_dest2);
 
-    int nb_dilatation = 5;
+    int nb_dilatation = 4;
     dilate(image_dest2, image_dest, stru_elmt_gray, Point(-1,-1), nb_dilatation);
     imshow("Image re dilatee",image_dest);
 
     erode(image_dest, image_dest2, stru_elmt_gray, Point(-1,-1), nb_dilatation);
-    imshow("Image re dilatee puis erodee",image_dest2);
-
+    imshow(imd,image_dest2);
+    imwrite(imd, image_dest2);
   }
 }
 
@@ -61,13 +61,13 @@ usage (const char *s)
   exit(EXIT_FAILURE);
 }
 
-#define param 2
+#define param 3
 int
 main( int argc, char* argv[] )
 {
   if(argc != (param+1))
     usage(argv[0]);
-  process(argv[1], argv[2]);
+  process(argv[1], argv[2], argv[3]);
   waitKey(0);
   return EXIT_SUCCESS;
 }

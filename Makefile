@@ -9,14 +9,20 @@ BIN=\
 	seuil_V0\
 	ero_dil\
 	terrain_mask \
+	application_mask\
+	make-se\
 
 .PHONY: all
 all: $(BIN)
 
 .PHONY: test
 test:
-	./seuil_V0 ../data/log1/001-rgb.png otsu-th-ocv.png
-	./ero_dil otsu-th-ocv.png carre.png
+	./make-se 7 2 croix.png
+	./terrain_mask ../data/log1/001-rgb.png mask.png
+	./ero_dil mask.png maskImage.png croix.png
+	./application_mask ../data/log1/001-rgb.png maskImage.png terrain.png autour.png
+
+
 
 .PHONY: clean
 clean:
