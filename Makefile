@@ -8,6 +8,7 @@ LDLIBS=\
 BIN=\
 	seuil_V0\
 	ero_dil\
+	terrain_mask \
 
 .PHONY: all
 all: $(BIN)
@@ -16,7 +17,6 @@ all: $(BIN)
 test:
 	./seuil_V0 ../data/log1/001-rgb.png otsu-th-ocv.png
 	./ero_dil otsu-th-ocv.png carre.png
-
 
 .PHONY: clean
 clean:
