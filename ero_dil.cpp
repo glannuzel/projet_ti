@@ -25,7 +25,7 @@ process(const char* ims, const char* imd, const char* stru)
 
     Mat image_gray;
     cvtColor(image, image_gray, CV_BGR2GRAY);
-    imshow("Image grise",image_gray);
+    //imshow("Image grise",image_gray);
 
     Mat stru_elmt_gray;
     cvtColor(stru_elmt, stru_elmt_gray, CV_BGR2GRAY);
@@ -35,17 +35,17 @@ process(const char* ims, const char* imd, const char* stru)
 
     int nb_erosions = 4;
     erode(image_gray, image_dest, stru_elmt_gray, Point(-1,-1), nb_erosions);
-    imshow("Image erodee",image_dest);
+    //imshow("Image erodee",image_dest);
 
     Mat image_dest2 = image_gray.clone();
 
     dilate(image_dest, image_dest2, stru_elmt_gray, Point(-1,-1), nb_erosions);
 
-    imshow("Image erodee puis dilatee",image_dest2);
+    //imshow("Image erodee puis dilatee",image_dest2);
 
     int nb_dilatation = 4;
     dilate(image_dest2, image_dest, stru_elmt_gray, Point(-1,-1), nb_dilatation);
-    imshow("Image re dilatee",image_dest);
+    //imshow("Image re dilatee",image_dest);
 
     erode(image_dest, image_dest2, stru_elmt_gray, Point(-1,-1), nb_dilatation);
     imshow(imd,image_dest2);

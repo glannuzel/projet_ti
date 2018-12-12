@@ -126,7 +126,19 @@ process(const char* imsname)
 
       cout << "mahalanobis2(1,1)" << mahal_inter.at<float>(0,0) << endl;
 
+      // mahalanobis image
+      Mat mahalanobis_mat = Mat::zeros(rows,cols,CV_32F);
+      for (int j=0; j<cols; j++)
+      {
+        for (int i=0; i<rows; i++)
+        {
+          mahalanobis_mat.at<float>(i,j)=mahal_inter.at<float>(0,i+j*rows);
+        }
+      }
 
+      cout << "mahalanobis(25,45) = " << mahalanobis_mat.at<float>(24,44) << endl;
+
+/*
       Mat canalB_modif = Mat::zeros(rows,cols,CV_32F);
       Mat canalG_modif = Mat::zeros(rows,cols,CV_32F);
       Mat canalR_modif = Mat::zeros(rows,cols,CV_32F);
@@ -136,23 +148,9 @@ process(const char* imsname)
       subtract(canalG,meanG,canalG_modif);
       subtract(canalR,meanR,canalR_modif);
       canalR_modif.at<float>(0,0) = canalR.at<uchar>(0,0) - meanR;
+*/
 
-
-
-
-
-
-      // mahalanobis image
-      Mat mahalanobis_mat = Mat::zeros(rows,cols,CV_32F);
-      for (int i=0; i<rows; i++)
-      {
-        for (int j=0; j<cols; j++)
-        {
-          mahalanobis_mat.at<float>(i,j)=mahal_inter.at<float>(0,j+i*cols);
-        }
-      }
-
-      int seuil = 20000;
+      int seuil = 750;
       for (int i=0; i<rows; i++)
       {
         for (int j=0; j<cols; j++)
@@ -166,6 +164,11 @@ process(const char* imsname)
           }
         }
       }
+/*
+      imshow("Binarisation Mahalanobis", mahalanobis_mat);
+      waitKey(0);
+*/
+      imwrite("mahalanobis.png",mahalanobis_mat);
 
   }
   else
