@@ -11,21 +11,28 @@ BIN=\
 	mahalanobis\
 	ero_dil\
 	enveloppe_convex\
+	comparaisons-vt-multiples\
+
+	#OBJ= comparaison-vt.o
 
 .PHONY: all
 all: $(BIN)
+
+#$(BIN): comparaison-vt.o
+
 
 .PHONY: test
 test:
 	#./seuil_V0 ../data/log1/001-rgb.png
 	#./mahalanobis_model_init ../data/log1/001-rgb.png
-	./mahalanobis ../data/log1/001-rgb.png
-	./ero_dil ./mahalanobis.png erosion.png ./croix.png
-	./ero_dil ./mahalanobis.png erosion_carre.png ./carre.png
-	./ero_dil ./mahalanobis.png erosion_grand_carre.png ./square.png
-	./enveloppe_convex ./erosion.png
-	./enveloppe_convex ./erosion_carre.png
-	./enveloppe_convex ./erosion_grand_carre.png
+	#./mahalanobis ../data/log1/001-rgb.png
+	#./ero_dil ./mahalanobis.png erosion.png ./croix.png
+	#./ero_dil ./mahalanobis.png erosion_carre.png ./carre.png
+	#./ero_dil ./mahalanobis.png erosion_grand_carre.png ./square.png
+	#./enveloppe_convex ./erosion.png
+	#./enveloppe_convex ./erosion_carre.png
+	#./enveloppe_convex ./erosion_grand_carre.png
+	./comparaisons-vt-multiples teste
 
 .PHONY: clean
 clean:
