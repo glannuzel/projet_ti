@@ -16,6 +16,8 @@ process(const char* ims)
   Mat image;
   image = imread(ims, CV_LOAD_IMAGE_GRAYSCALE);
 
+  blur( image, image, Size(3,3) );
+
   Mat threshold_output;
   threshold(image, threshold_output, 50, 255, THRESH_BINARY);
 
@@ -24,7 +26,6 @@ process(const char* ims)
   // find contours
   findContours(threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
 
-  cout << contours.size() << endl;
 
   // create hull array for convex hull points
   vector< vector<Point> > hull(contours.size());
@@ -33,21 +34,46 @@ process(const char* ims)
     convexHull(Mat(contours[i]), hull[i]);
   }
 
+  cout << "hull : \n" << hull[0] << endl;
+  cout << "hull2 : \n" << hull[1] << endl;
+
+  vector < vector<Point> > hull_add(1);
+  for (int i = 0; (unsigned)i < hull.size(); i++)
+  {
+    for (int j = 0; (unsigned)j < hull[i].size(); j++)
+    {
+      hull_add[0].push_back(hull[i][j]);
+    }
+  }
+
+  cout << "hull_add : \n" << hull_add[0] << endl;
+
+  vector < vector <Point> > myconvex(1);
+  convexHull(Mat(hull_add[0]), myconvex[0]);
+
+  cout << "myconvex : \n" << myconvex[0] << endl;
+
+  Mat drawing = Mat::zeros(threshold_output.size(), CV_8UC3);
+  Scalar color = Scalar(0, 0, 255); // red - color for convex hull
+  drawContours(drawing, myconvex, -1, color);
+
+/*
   // create a blank image (black image)
   Mat drawing = Mat::zeros(threshold_output.size(), CV_8UC3);
 
   for(int i = 0; (unsigned)i < contours.size(); i++)
   {
-      //Scalar color_contours = Scalar(0, 255, 0); // green - color for contours
+      //Scalar color_contours = Scalar(0, 255, 0); // green - color for contourscontours
       Scalar color = Scalar(0, 0, 255); // red - color for convex hull
       // draw with contour
-      //drawContours(drawing, contours, i, color_contours, 1, 8, vector<Vec4i>(), 0, Point());
+      //drawContours(drawing, all_contour, 0, color_contours, 1, 8, vector<Vec4i>(), 0, Point());
       // draw wth convex hull
       drawContours(drawing, hull, i, color, 1, 8, vector<Vec4i>(), 0, Point());
   }
+  */
 
     imshow("convex",drawing);
-
+    imwrite("convex-hull.png",drawing);
 }
 
 

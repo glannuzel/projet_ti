@@ -1,8 +1,13 @@
 #include <iostream>
 #include <cstdlib>
-#include <math.h>
-
 #include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/nonfree/features2d.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/nonfree/nonfree.hpp>
+#include <math.h>
+#include <stdio.h>
 
 using namespace cv;
 using namespace std;
@@ -11,46 +16,15 @@ using namespace std;
 #define S 1
 #define V 2
 
-/*
-Change a channel value
- */
-void adjust_channel(Mat &image, const int shift, const int channel){
-  int col_size = image.cols;
-  int row_size = image.rows;
-  for (int i = 0; i < row_size; i++){
-    for (int j = 0; j < col_size; j++){
-      Vec3b &pixel = image.at<Vec3b>(i,j);
-      if (pixel[channel] + shift <= 255)
-	pixel[channel] += shift;
-      else
-	pixel[channel] = 255;
-    }
-  }
-}
-
-void process (const char * ims, const char * imd){
-  Mat image=imread(ims);
-  if (!image.data){
-    cout << "Error loading image" << endl;
-    exit(EXIT_FAILURE);
-  }
-  if (image.type() != CV_8UC3)
-    image.convertTo(image, CV_8UC3);
-
+Mat detect(Mat image, int attempts, int clusterCount){
   Mat samples(image.rows * image.cols, 3, CV_32F);
   for( int y = 0; y < image.rows; y++ )
     for( int x = 0; x < image.cols; x++ )
       for( int z = 0; z < 3; z++)
         samples.at<float>(y + x*image.rows, z) = image.at<Vec3b>(y,x)[z];
-
-
-  int clusterCount = 10;
   Mat labels;
-  int attempts = 1;
   Mat centers;
-  kmeans(samples, clusterCount, labels, TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 100, 0.0001), attempts, KMEANS_PP_CENTERS, centers );
-
-
+  kmeans(samples, clusterCount, labels, TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 25, 0.00001), attempts, KMEANS_PP_CENTERS, centers);
   Mat new_image( image.size(), image.type() );
   for( int y = 0; y < image.rows; y++ )
     for( int x = 0; x < image.cols; x++ )
@@ -60,48 +34,156 @@ void process (const char * ims, const char * imd){
 	new_image.at<Vec3b>(y,x)[1] = centers.at<float>(cluster_idx, 1);
 	new_image.at<Vec3b>(y,x)[2] = centers.at<float>(cluster_idx, 2);
       }
-  imshow( "clustered image", new_image );
-  waitKey( 0 );
+  return new_image;
+}
 
+bool has_white_contour(Mat image, float threshold){
+  long count = 0;
+  for (int i = 0; i < image.rows; i++){
+    for (int j = 0; j < image.cols; j++){
+      if (image.at<unsigned char>(i, j) >= 200) count++;
+    }
+  }
+  if (count / (float)(image.cols*image.rows) > threshold)
+    return true;
+  return false;
+}
+
+void remove_glitch(Mat & image, int size, int step, float threshold){
+  for (int i = 0; i < image.rows; i+=step){
+    for (int j = 0; j < image.cols; j+=step){
+      if (j+size < image.cols && i+size < image.rows){
+	Mat subImage = Mat(image, Rect(j, i, size, size));
+	bool b = has_white_contour(subImage, threshold);
+	if (b){
+	  for (int ii = i; ii < i+size; ii++){
+	    for (int jj = j; jj < j+size; jj++){
+	      image.at<unsigned char>(ii, jj) = 255;
+	    }
+	  }
+	}	
+      }      
+    }
+  }
+}
+
+void colorFilter(Mat & mask, Mat & originale){  
+  blur(mask, mask, Size(70,70));
+  for (int ii = 0; ii < 1; ii++){
+    for (int i = 0; i < originale.rows; i++){
+      for (int j = 0; j < originale.cols; j++){
+	unsigned char & pp = mask.at<unsigned char>(i,j);
+	if (pp < 200)
+	  pp = 0;
+	else
+	  pp = 255;
+      }
+    }
+  }
+  int dilation_type = MORPH_ELLIPSE;
+  int dilation_size = 17;
+  Mat element = getStructuringElement( dilation_type, Size( 2*dilation_size + 1, 2*dilation_size+1), Point( dilation_size, dilation_size ) );
+  // dilate(mask, mask, element);
+  //remove_glitch(mask, 10, 1, 0.7);  
+}
+
+void process_ims (const char * ims){
+  Mat image=imread(ims);
+  if (!image.data){
+    cout << "Error loading image" << endl;
+    exit(EXIT_FAILURE);
+  }
+  if (image.type() != CV_8UC3)
+    image.convertTo(image, CV_8UC3);
+  Mat originale = image.clone();
+  Mat image_blur;
+  //GaussianBlur(image, image_blur, Point(0, 0), 3);
+  //addWeighted(image, 1.5, image_blur, -1, 0, image);
+  // Mat new_image = detect(image, 1, 10);
+  
   Mat hsv;
-  cvtColor(new_image, hsv, COLOR_BGR2HSV);
-  int sensibility = 30;
+  cvtColor(image, hsv, COLOR_BGR2HSV);
+  int sensibility = 35;
   Scalar lower_green = Scalar(60-sensibility,0,0);
-  Scalar  upper_green =Scalar(60+sensibility,255,255);
+  Scalar  upper_green = Scalar(60+sensibility, 255, 255);
   Mat mask;
   inRange(hsv, lower_green, upper_green, mask);
-  imshow("f", mask);
-  imwrite(imd, mask);
+  colorFilter(mask, originale);
 
-  waitKey(0);
-  /*Mat imageG = Mat(image.rows, image.cols, CV_8UC1);
-    cvtColor(image, imageG, COLOR_BGR2GRAY);
-    std::vector<std::vector<cv::Point> > contours;
-  findContours(imageG, contours, RETR_TREE, CHAIN_APPROX_SIMPLE);
-  imshow("dfs", imageG);
-  waitKey(0);
-  cv::Mat contourImage(image.size(), CV_8UC3, cv::Scalar(0,0,0));
-  cv::Scalar colors[3];
-  colors[0] = cv::Scalar(255, 0, 0);
-  colors[1] = cv::Scalar(0, 255, 0);
-  colors[2] = cv::Scalar(0, 0, 255);
-  for (size_t idx = 0; idx < contours.size(); idx++) {
-    cv::drawContours(imageG, contours, idx, colors[idx % 3]);
+  Mat threshold_output = mask.clone();
+  vector< vector<Point> > contours; // list of contour points
+  vector<Vec4i> hierarchy;
+  // find contours
+  findContours(threshold_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_TC89_L1, Point(0, 0));
+  // create hull array for convex hull points
+  vector< vector<Point> > hull(contours.size());
+  for(int i = 0; (unsigned)i < contours.size(); i++){
+      convexHull(Mat(contours[i]), hull[i]);
   }
-  imshow("dffdss", contourImage);
-  waitKey(0);*/
+  vector < vector<Point> > hull_add(1);
+  for (int i = 0; (unsigned)i < hull.size(); i++)
+  {
+    for (int j = 0; (unsigned)j < hull[i].size(); j++)
+    {
+      hull_add[0].push_back(hull[i][j]);
+    }
+  }
+    // create a blank image (black image)
+  Mat drawing = Mat::zeros(threshold_output.size(), CV_8UC3);
+  vector < vector <Point> > myconvex(1);
+  convexHull(Mat(hull_add[0]), myconvex[0]);
+  Scalar color = Scalar(255, 255, 255); // red - color for convex hull
+  drawContours(drawing, myconvex, -1, color, CV_FILLED, 8, vector<Vec4i>(), 0, Point());
+  //drawContours(drawing, myconvex, -1, color);
+
+  for(int i = 0; (unsigned)i < contours.size(); i++){
+      //Scalar color_contours = Scalar(0, 255, 0); // green - color for contours
+      Scalar color = Scalar(255, 255, 255); // red - color for convex hull
+      // draw with contour
+      // draw wth convex hull
+      drawContours(drawing, hull, i, color, CV_FILLED, 8, vector<Vec4i>(), 0, Point());
+    }
+  cvtColor(drawing, drawing, COLOR_BGR2GRAY);
+  imshow("convex",drawing);
+  // drawing = mask;
+  for (int i = 0; i < originale.rows; i++){
+    for (int j = 0; j < originale.cols; j++){
+      Vec3b & p = originale.at<Vec3b>(i,j);
+      unsigned char pp = drawing.at<unsigned char>(i,j);
+      if (pp < 100){
+	p.val[0] = 0;
+	p.val[1] = 0;
+	p.val[2] = 0;
+      }
+    }
+  }
+  imshow("ims", originale);
+  waitKey(0);
+}
+
+void process(void){
+  for (int i = 1; i <= 374; i++){
+    char ims[999];
+    if (i < 10)
+      sprintf(ims, "log1/00%d-rgb.png", i);
+    else if (i < 100)
+      sprintf(ims, "log1/0%d-rgb.png", i);
+    else
+      sprintf(ims, "log1/%d-rgb.png", i);
+    process_ims(ims);
+  }
 }
 
 void usage (const char *s){
-  std::cerr<<"Usage: "<<s<<" imsname \n"<<std::endl;
+  std::cerr<<"Usage: "<<s<<" \n"<<std::endl;
   exit(EXIT_FAILURE);
 }
 
-#define param 2
+#define param 0
 int main (int argc, char * argv[]){
   if (argc != (param+1)){
     usage(argv[0]);
   }
-  process(argv[1], argv[2]);
+  process();
   return EXIT_SUCCESS;
 }

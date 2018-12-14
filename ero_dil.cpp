@@ -48,6 +48,7 @@ process(const char* ims, const char* imd, const char* stru)
     //imshow("Image re dilatee",image_dest);
 
     erode(image_dest, image_dest2, stru_elmt_gray, Point(-1,-1), nb_dilatation);
+
     imshow(imd,image_dest2);
     imwrite(imd, image_dest2);
   }

@@ -14,6 +14,7 @@ BIN=\
 	comparaisons-vt-multiples\
 
 	#OBJ= comparaison-vt.o
+	test_vt\
 
 .PHONY: all
 all: $(BIN)
@@ -33,6 +34,7 @@ test:
 	#./enveloppe_convex ./erosion_carre.png
 	#./enveloppe_convex ./erosion_grand_carre.png
 	./comparaisons-vt-multiples teste
+
 
 .PHONY: clean
 clean:

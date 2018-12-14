@@ -150,7 +150,7 @@ process(const char* imsname)
       canalR_modif.at<float>(0,0) = canalR.at<uchar>(0,0) - meanR;
 */
 
-      int seuil = 750;
+      int seuil = 800;
       for (int i=0; i<rows; i++)
       {
         for (int j=0; j<cols; j++)
@@ -164,6 +164,27 @@ process(const char* imsname)
           }
         }
       }
+
+
+      blur(mahalanobis_mat, mahalanobis_mat, Size(40,40));
+      for (int i=0; i<rows; i++)
+      {
+        for (int j=0; j<cols; j++)
+        {
+          if(mahalanobis_mat.at<float>(i,j) > 225)
+          {
+            mahalanobis_mat.at<float>(i,j) = 255;
+          }
+          else{
+            mahalanobis_mat.at<float>(i,j) = 0;
+          }
+        }
+      }
+      int dilation_type = MORPH_ELLIPSE;
+      int dilation_size = 15;
+      Mat element = getStructuringElement( dilation_type, Size( 2*dilation_size + 1, 2*dilation_size+1), Point( dilation_size, dilation_size ) );
+      dilate(mahalanobis_mat, mahalanobis_mat, element);
+
 /*
       imshow("Binarisation Mahalanobis", mahalanobis_mat);
       waitKey(0);
