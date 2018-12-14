@@ -68,12 +68,12 @@ void remove_glitch(Mat & image, int size, int step, float threshold){
 }
 
 void colorFilter(Mat & mask, Mat & originale){  
-  blur(mask, mask, Size(40,40));
+  blur(mask, mask, Size(70,70));
   for (int ii = 0; ii < 1; ii++){
     for (int i = 0; i < originale.rows; i++){
       for (int j = 0; j < originale.cols; j++){
 	unsigned char & pp = mask.at<unsigned char>(i,j);
-	if (pp < 225)
+	if (pp < 200)
 	  pp = 0;
 	else
 	  pp = 255;
@@ -81,10 +81,10 @@ void colorFilter(Mat & mask, Mat & originale){
     }
   }
   int dilation_type = MORPH_ELLIPSE;
-  int dilation_size = 10;
+  int dilation_size = 17;
   Mat element = getStructuringElement( dilation_type, Size( 2*dilation_size + 1, 2*dilation_size+1), Point( dilation_size, dilation_size ) );
-  dilate(mask, mask, element);
-  remove_glitch(mask, 5, 1, 0.9);  
+  // dilate(mask, mask, element);
+  //remove_glitch(mask, 10, 1, 0.7);  
 }
 
 void process_ims (const char * ims){
@@ -110,8 +110,6 @@ void process_ims (const char * ims){
   inRange(hsv, lower_green, upper_green, mask);
   colorFilter(mask, originale);
 
-
-
   Mat threshold_output = mask.clone();
   vector< vector<Point> > contours; // list of contour points
   vector<Vec4i> hierarchy;
@@ -122,8 +120,22 @@ void process_ims (const char * ims){
   for(int i = 0; (unsigned)i < contours.size(); i++){
       convexHull(Mat(contours[i]), hull[i]);
   }
-  // create a blank image (black image)
+  vector < vector<Point> > hull_add(1);
+  for (int i = 0; (unsigned)i < hull.size(); i++)
+  {
+    for (int j = 0; (unsigned)j < hull[i].size(); j++)
+    {
+      hull_add[0].push_back(hull[i][j]);
+    }
+  }
+    // create a blank image (black image)
   Mat drawing = Mat::zeros(threshold_output.size(), CV_8UC3);
+  vector < vector <Point> > myconvex(1);
+  convexHull(Mat(hull_add[0]), myconvex[0]);
+  Scalar color = Scalar(255, 255, 255); // red - color for convex hull
+  drawContours(drawing, myconvex, -1, color, CV_FILLED, 8, vector<Vec4i>(), 0, Point());
+  //drawContours(drawing, myconvex, -1, color);
+
   for(int i = 0; (unsigned)i < contours.size(); i++){
       //Scalar color_contours = Scalar(0, 255, 0); // green - color for contours
       Scalar color = Scalar(255, 255, 255); // red - color for convex hull
@@ -150,7 +162,7 @@ void process_ims (const char * ims){
 }
 
 void process(void){
-  for (int i = 262; i <= 374; i++){
+  for (int i = 1; i <= 374; i++){
     char ims[999];
     if (i < 10)
       sprintf(ims, "log1/00%d-rgb.png", i);
