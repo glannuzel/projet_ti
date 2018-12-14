@@ -150,7 +150,7 @@ process(const char* imsname)
       canalR_modif.at<float>(0,0) = canalR.at<uchar>(0,0) - meanR;
 */
 
-      int seuil = 750;
+      int seuil = 800;
       for (int i=0; i<rows; i++)
       {
         for (int j=0; j<cols; j++)
