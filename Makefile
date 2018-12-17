@@ -15,6 +15,7 @@ BIN=\
 	test_vt\
 	remplissage_enveloppe_convex\
 	make-se\
+	terrain_mask\
 
 
 .PHONY: all
@@ -33,6 +34,10 @@ algo1:
 	./test_vt ../data/log1/001-rgb.png ./hull.png
 	./remplissage_enveloppe_convex ./hull.png filled_region.png
 	./comparaisons-vt-multiples
+
+.PHONY: algo2
+algo2:
+	./terrain_mask ../data/log1/
 
 .PHONY: clean
 clean:
