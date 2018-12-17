@@ -8,24 +8,23 @@
 #include <opencv2/nonfree/nonfree.hpp>
 #include <math.h>
 #include <stdio.h>
-#include <chrono>
 
 #define PROCESSED 1
 #define NOT_PROCESSED 0
 
 using namespace cv;
 using namespace std;
-using namespace std::chrono;
 
-milliseconds avg;
-int nb_samples = 0;
-
-void filter(Mat & mask){    
+void filter(Mat & mask, int oversize){    
   int dilation_type = MORPH_RECT;
-  int dilation_size = 15;
+  int dilation_size = 25;
   Mat element = getStructuringElement( dilation_type, Size( 2*dilation_size + 1, 2*dilation_size+1), Point( dilation_size, dilation_size ) );
   morphologyEx(mask, mask, MORPH_OPEN, element);
-  dilate(mask, mask, element);  
+  if (oversize){
+    dilation_size = oversize;
+    element = getStructuringElement(dilation_type, Size( 2*dilation_size + 1, 2*dilation_size+1), Point( dilation_size, dilation_size ) );
+    dilate(mask, mask, element);
+  }
 }
 
 void enveloppe_convexe(Mat mask, Mat & originale){
@@ -69,8 +68,7 @@ void enveloppe_convexe(Mat mask, Mat & originale){
   }
 }
 
-int process_ims (const char * ims, const char * imd){
-  milliseconds ms = duration_cast< milliseconds >(system_clock::now().time_since_epoch());  
+int process_ims (const char * ims, const char * imd, int oversize){
   Mat image=imread(ims);
   if (!image.data){
     return NOT_PROCESSED;
@@ -86,35 +84,29 @@ int process_ims (const char * ims, const char * imd){
   Scalar  upper_green = Scalar(60+sensibility, 255, 255);
   Mat mask;
   inRange(hsv, lower_green, upper_green, mask);
-  filter(mask);  
+  filter(mask, oversize);  
   enveloppe_convexe(mask, originale);  
   imwrite(imd, mask);
-  milliseconds ms2 = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
-  milliseconds c = ms2-ms;
-  if (!nb_samples) avg = c;
-  else avg = (avg * nb_samples + c)/(nb_samples+1);
-  nb_samples++;
   return PROCESSED;
 }
 
-void process(const char * ims, const char * imd){
-  if (!process_ims(ims, imd)){
+void process(const char * ims, const char * imd, int oversize){
+  if (!process_ims(ims, imd, oversize)){
     cout << "Image not found\n";
     exit(1);
   }
-  cout << "Avg process time:" << avg.count() << endl;
 }
 
 void usage (const char *s){
-  std::cerr<<"Usage: "<<s<<" <image path> <mask dest> \n"<<std::endl;
+  std::cerr<<"Usage: "<<s<<" <image path> <mask dest> <mask oversize> \n"<<std::endl;
   exit(EXIT_FAILURE);
 }
 
-#define param 2
+#define param 3
 int main (int argc, char * argv[]){
   if (argc != (param+1)){
     usage(argv[0]);
   }
-  process(argv[1], argv[2]);
+  process(argv[1], argv[2], atoi(argv[3]));
   return EXIT_SUCCESS;
 }
