@@ -1,5 +1,5 @@
 CPPFLAGS=-I/opt/opencv/include
-CXXFLAGS=-Wall -Wextra -Werror
+CXXFLAGS=-Wall -Wextra -Werror --std=c++11
 LDFLAGS=-Wl,-R/opt/opencv/lib -L/opt/opencv/lib
 LDLIBS=\
 	-lopencv_core\
@@ -20,6 +20,9 @@ BIN=\
 .PHONY: all
 all: $(BIN)
 
+.PHONY: test
+test:
+	./comparaisons-vt-multiples
 
 .PHONY: algo1
 algo1:
@@ -30,7 +33,7 @@ algo1:
 	./test_vt ../data/log1/001-rgb.png ./hull.png
 	./enveloppe_convex ./erosion.png convex-hull.png
 	./remplissage_enveloppe_convex ./convex-hull.png filled_region.png
-	./comparaisons-vt-multiples teste
+	./comparaisons-vt-multiples
 
 .PHONY: clean
 clean:
