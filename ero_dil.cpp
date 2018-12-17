@@ -11,6 +11,12 @@ using namespace std;
 void
 process(const char* ims, const char* imd, const char* stru)
 {
+  //Time calculation init
+  clock_t start;
+  double duration;
+  start = clock();
+
+
   Mat image;
   Mat stru_elmt;
 
@@ -41,6 +47,7 @@ process(const char* ims, const char* imd, const char* stru)
 
     dilate(image_dest, image_dest2, stru_elmt_gray, Point(-1,-1), nb_erosions);
 
+
     //imshow("Image erodee puis dilatee",image_dest2);
 
     int nb_dilatation = 4;
@@ -49,8 +56,12 @@ process(const char* ims, const char* imd, const char* stru)
 
     erode(image_dest, image_dest2, stru_elmt_gray, Point(-1,-1), nb_dilatation);
 
+    duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+    cout << "Erosion and dilation time : " << duration << endl;
+
     imshow(imd,image_dest2);
     imwrite(imd, image_dest2);
+
   }
 }
 

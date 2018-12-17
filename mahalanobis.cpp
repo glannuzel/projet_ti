@@ -11,6 +11,11 @@ using namespace std;
 void
 process(const char* imsname)
 {
+  //Time calculation init
+  clock_t start;
+  double duration;
+  start = clock();
+
   Mat ims = imread(imsname);
   int rows = ims.rows;
   int cols = ims.cols;
@@ -19,7 +24,6 @@ process(const char* imsname)
   Mat invCov_mat = Mat::zeros(3,3,CV_32F);
 
   ifstream fichier("test.txt", ios::in);
-
 
   if(fichier)
   {
@@ -71,7 +75,6 @@ process(const char* imsname)
         }
       }
 
-
       Mat mcouleur = Mat::zeros(rows*cols,3,CV_32F);
 
       for (int j=0; j<cols;j++)
@@ -83,8 +86,6 @@ process(const char* imsname)
           mcouleur.at<float>(i+j*rows,2)=icouleur.at<uchar>(cols*rows*2+i+j*rows,0);
         }
       }
-      cout << "Icouleur(358400) = " << icouleur.at<uchar>(358399,0)-1+1 << endl;
-      //cout << "Mcouleur(1,2) = " << mcouleur.at<float>(358399,0)-1+1 << endl;
 
       for (int i = 0; i<rows*cols; i++)
       {
@@ -93,8 +94,6 @@ process(const char* imsname)
           mcouleur.at<float>(i,2) = mcouleur.at<float>(i,2) - meanR;
       }
 
-      cout << "Mcouleur(1,2) = " << mcouleur.at<float>(0,1)-1+1 << endl;
-      cout << "Mcouleur(358400,0) = " << mcouleur.at<float>(358399,0)-1+1 << endl;
 
       Mat inter = Mat::zeros(rows*cols,3,CV_32F);
       inter = mcouleur * invCov_mat;
@@ -102,9 +101,6 @@ process(const char* imsname)
       Mat inter_transp;
       transpose(inter,inter_transp);
 
-      cout << "intermediaire(1,1) = " << inter_transp.at<float>(0,0)-1+1 << endl;
-      cout << "intermediaire(2,1) = " << inter_transp.at<float>(1,0)-1+1 << endl;
-      cout << "intermediaire(3,1) = " << inter_transp.at<float>(2,0)-1+1 << endl;
 
       //transpose mcouleur
       Mat mcouleur_transp;
@@ -112,19 +108,11 @@ process(const char* imsname)
       Mat fusion;
       multiply(inter_transp,mcouleur_transp,fusion);
 
-      cout << "Fusion(1,1) = " << fusion.at<float>(2,0) << endl;
-      cout << "Fusion(2,1) = " << fusion.at<float>(1,0) << endl;
-      cout << "Fusion(3,1) = " << fusion.at<float>(0,0) << endl;
-
-      // OK
-
       Mat mahal_inter = Mat::zeros(1,rows*cols,CV_32F);
       for (int i=0; i<rows*cols; i++)
       {
         mahal_inter.at<float>(0,i)=fusion.at<float>(0,i)+fusion.at<float>(1,i)+fusion.at<float>(2,i);
       }
-
-      cout << "mahalanobis2(1,1)" << mahal_inter.at<float>(0,0) << endl;
 
       // mahalanobis image
       Mat mahalanobis_mat = Mat::zeros(rows,cols,CV_32F);
@@ -136,7 +124,8 @@ process(const char* imsname)
         }
       }
 
-      cout << "mahalanobis(25,45) = " << mahalanobis_mat.at<float>(24,44) << endl;
+      duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+      cout << "Mahalanobis calculation time : " << duration << endl;
 
 /*
       Mat canalB_modif = Mat::zeros(rows,cols,CV_32F);
@@ -149,6 +138,8 @@ process(const char* imsname)
       subtract(canalR,meanR,canalR_modif);
       canalR_modif.at<float>(0,0) = canalR.at<uchar>(0,0) - meanR;
 */
+
+      start = clock();
 
       int seuil = 800;
       for (int i=0; i<rows; i++)
@@ -165,7 +156,10 @@ process(const char* imsname)
         }
       }
 
+      duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+      cout << "Thresholding and binarization : " << duration << endl;
 
+/*
       blur(mahalanobis_mat, mahalanobis_mat, Size(40,40));
       for (int i=0; i<rows; i++)
       {
@@ -184,11 +178,11 @@ process(const char* imsname)
       int dilation_size = 15;
       Mat element = getStructuringElement( dilation_type, Size( 2*dilation_size + 1, 2*dilation_size+1), Point( dilation_size, dilation_size ) );
       dilate(mahalanobis_mat, mahalanobis_mat, element);
+*/
 
-/*
       imshow("Binarisation Mahalanobis", mahalanobis_mat);
       waitKey(0);
-*/
+
       imwrite("mahalanobis.png",mahalanobis_mat);
 
   }

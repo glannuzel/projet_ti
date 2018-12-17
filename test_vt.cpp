@@ -35,7 +35,7 @@ process(const char* ims, const char* env)
     }
   }
 
-  imshow("Test verite", img_test);
+  imshow(env, img_test);
 
 }
 
