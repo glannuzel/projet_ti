@@ -14,8 +14,7 @@ BIN=\
 	comparaisons-vt-multiples\
 	test_vt\
 	remplissage_enveloppe_convex\
-	#OBJ= comparaison-vt.o
-
+	make-se\
 
 .PHONY: all
 all: $(BIN)
@@ -26,16 +25,6 @@ all: $(BIN)
 .PHONY: test
 test:
 	#./seuil_V0 ../data/log1/001-rgb.png
-	./mahalanobis_model_init ../data/log1/001-rgb.png
-	./mahalanobis ../data/log1/001-rgb.png
-	./ero_dil ./mahalanobis.png erosion.png ./croix.png
-	#./ero_dil ./mahalanobis.png erosion_carre.png ./carre.png
-	#./ero_dil ./mahalanobis.png erosion_grand_carre.png ./square.png
-	./enveloppe_convex ./erosion.png convex-hull.png
-	./remplissage_enveloppe_convex ./convex-hull.png filled_region.png
-	#./enveloppe_convex ./erosion_carre.png
-	#./enveloppe_convex ./erosion_grand_carre.png
-	#./comparaisons-vt-multiples teste
 
 .PHONY: algo1
 algo1:
@@ -44,6 +33,7 @@ algo1:
 	./ero_dil ./mahalanobis.png erosion.png ./croix.png
 	./enveloppe_convex ./erosion.png convex-hull.png
 	./remplissage_enveloppe_convex ./convex-hull.png filled_region.png
+	./comparaisons-vt-multiples teste
 
 .PHONY: clean
 clean:

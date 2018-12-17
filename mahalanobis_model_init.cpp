@@ -11,13 +11,19 @@ using namespace std;
 void
 process(const char* imsname)
 {
+  //Time calculation init
+  clock_t start;
+  double duration;
+
+  start = clock();
+
   // Source image
   Mat ims = imread(imsname);
   int rows = ims.rows;
   int cols = ims.cols;
 
   Mat cov_mat = Mat::zeros(3,3,CV_32F); // covariance matrix
-  Mat mean_mat = Mat::zeros(1,3,CV_32F); // mean matrix
+  //Mat mean_mat = Mat::zeros(1,3,CV_32F); // mean matrix
 
   // Crop area to make the model
   Rect areaToCrop(515,189,9,4);
@@ -25,8 +31,8 @@ process(const char* imsname)
   rows = cropped_image_ocv.rows;
   cols = cropped_image_ocv.cols;
 
-  imshow("crop-ocv.png",cropped_image_ocv);
-  waitKey(0);
+  //imshow("crop-ocv.png",cropped_image_ocv);
+  //waitKey(0);
 
   // Means
   //Affichage des canaux R, G et B
@@ -48,10 +54,11 @@ process(const char* imsname)
   Scalar meanG = mean(canalG);
   Scalar meanB = mean(canalB);
 
+/*
   mean_mat.at<float>(0,0)=meanB[0];
   mean_mat.at<float>(0,1)=meanG[0];
   mean_mat.at<float>(0,2)=meanR[0];
-
+*/
 
   Mat canalB_col = Mat::zeros(cols*rows,1,CV_8UC1);
   Mat canalR_col = Mat::zeros(cols*rows,1,CV_8UC1);
@@ -89,8 +96,6 @@ process(const char* imsname)
   cov_mat.at<float>(1,1)=mean(pow2G)[0];
   cov_mat.at<float>(2,2)=mean(pow2R)[0];
 
-  cout << "cov 1 1 = " << cov_mat.at<float>(2,2) << endl;
-
   Mat bg, br, gr;
   multiply(diffB,diffG,bg);
   multiply(diffB,diffR,br);
@@ -121,14 +126,24 @@ process(const char* imsname)
                 fichier << cov_mat.at<float>(2,2) << endl;
 
                 //fichier << mean_mat << endl;
+                fichier << meanB[0] << endl;
+                fichier << meanG[0] << endl;
+                fichier << meanR[0] << endl;
+                /*
                 fichier << mean_mat.at<float>(0,0) << endl;
                 fichier << mean_mat.at<float>(0,1) << endl;
                 fichier << mean_mat.at<float>(0,2) << endl;
+                */
 
                 fichier.close();
         }
         else
+        {
                 cerr << "Impossible d'ouvrir le fichier !" << endl;
+        }
+
+    duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+    cout << "Initialisation time : " << duration << endl;
 }
 
 void
