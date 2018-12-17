@@ -34,8 +34,7 @@ algo1:
 	./ero_dil ./mahalanobis.png erosion.png ./croix.png
 	./enveloppe_convex ./erosion.png hull.png
 	./test_vt $(DATA) ./hull.png
-	./enveloppe_convex ./erosion.png convex-hull.png
-	./remplissage_enveloppe_convex ./convex-hull.png filled_region_4_60.png
+	./remplissage_enveloppe_convex ./hull.png filled_region_4_60.png
 
 .PHONY: clean
 clean:

@@ -47,7 +47,7 @@ process(const char* imsname)
       cov_mat.at<float>(2,1)=cov21;
 
       invert(cov_mat, invCov_mat, DECOMP_SVD);
-
+/*
       //Affichage des canaux R, G et B
       Mat canalR = Mat::zeros(rows,cols,CV_8UC1);
       Mat canalG = Mat::zeros(rows,cols,CV_8UC1);
@@ -62,7 +62,8 @@ process(const char* imsname)
           canalR.at<uchar>(i,j)=ims.at<Vec3b>(i,j)[2];
         }
       }
-
+      */
+/*
       Mat icouleur = Mat::zeros(rows*cols*3,1,CV_8UC1);
 
       for (int j=0; j<cols;j++)
@@ -86,6 +87,29 @@ process(const char* imsname)
           mcouleur.at<float>(i+j*rows,2)=icouleur.at<uchar>(cols*rows*2+i+j*rows,0);
         }
       }
+*/
+      Mat mcouleur = Mat::zeros(rows*cols,3,CV_32F);
+      for (int j=0; j<cols;j++)
+      {
+        for (int i=0; i< rows; i++)
+        {
+          mcouleur.at<float>(i+j*rows,0)=ims.at<Vec3b>(i,j)[0] - meanB;
+          mcouleur.at<float>(i+j*rows,1)=ims.at<Vec3b>(i,j)[1] - meanG;
+          mcouleur.at<float>(i+j*rows,2)=ims.at<Vec3b>(i,j)[2] - meanR;
+        }
+      }
+
+
+/*
+      for (int j=0; j<cols;j++)
+      {
+        for (int i=0; i< rows; i++)
+        {
+          mcouleur.at<float>(i+j*rows,0)=ims.at<Vec3b>(i,j)[0];
+          mcouleur.at<float>(i+j*rows,1)=ims.at<Vec3b>(i,j)[1];
+          mcouleur.at<float>(i+j*rows,2)=ims.at<Vec3b>(i,j)[2];
+        }
+      }
 
       for (int i = 0; i<rows*cols; i++)
       {
@@ -93,7 +117,7 @@ process(const char* imsname)
           mcouleur.at<float>(i,1) = mcouleur.at<float>(i,1) - meanG;
           mcouleur.at<float>(i,2) = mcouleur.at<float>(i,2) - meanR;
       }
-
+*/
 
       Mat inter = Mat::zeros(rows*cols,3,CV_32F);
       inter = mcouleur * invCov_mat;
@@ -101,21 +125,28 @@ process(const char* imsname)
       Mat inter_transp;
       transpose(inter,inter_transp);
 
-
       //transpose mcouleur
       Mat mcouleur_transp;
       transpose(mcouleur,mcouleur_transp);
       Mat fusion;
       multiply(inter_transp,mcouleur_transp,fusion);
-
+/*
       Mat mahal_inter = Mat::zeros(1,rows*cols,CV_32F);
       for (int i=0; i<rows*cols; i++)
       {
         mahal_inter.at<float>(0,i)=fusion.at<float>(0,i)+fusion.at<float>(1,i)+fusion.at<float>(2,i);
       }
-
+*/
       // mahalanobis image
       Mat mahalanobis_mat = Mat::zeros(rows,cols,CV_32F);
+      for (int j=0; j<cols; j++)
+      {
+        for (int i=0; i<rows; i++)
+        {
+          mahalanobis_mat.at<float>(i,j)=fusion.at<float>(0,i+j*rows)+fusion.at<float>(1,i+j*rows)+fusion.at<float>(2,i+j*rows);
+        }
+      }
+      /*
       for (int j=0; j<cols; j++)
       {
         for (int i=0; i<rows; i++)
@@ -123,6 +154,7 @@ process(const char* imsname)
           mahalanobis_mat.at<float>(i,j)=mahal_inter.at<float>(0,i+j*rows);
         }
       }
+      */
 
       duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
       cout << "Mahalanobis calculation time : " << duration << endl;

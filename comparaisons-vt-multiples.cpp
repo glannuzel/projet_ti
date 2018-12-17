@@ -116,6 +116,7 @@ process(void)
   Mat image;
   Mat image_vt;
 
+<<<<<<< HEAD
   // Pour chaque image
   image = imread("./filled_region_1_001.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log1-vt/001-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
@@ -192,6 +193,21 @@ process(void)
   image = imread("./filled_region_4_60.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log4-vt/60-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
   comparaison_vt(tableau, image , image_vt);
+=======
+  image = imread("./filled_region.png", CV_LOAD_IMAGE_COLOR);
+  image_vt = imread( "./images_vt/log1-vt/001-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
+
+
+  if(!image.data||!image_vt.data)
+    {
+        cout <<  "Image not found" << std::endl ;
+    }
+  else
+  {
+    comparaison_vt(tableau, image , image_vt);
+
+  }
+>>>>>>> ae2e8c78c66e24ea93a129989877d00cdae7d6c6
 
   float nb_pixels_tot_moy(0);
   float nb_fp_moy(0);
