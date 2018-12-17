@@ -22,9 +22,8 @@ int nb_samples = 0;
 
 void filter(Mat & mask){    
   int dilation_type = MORPH_RECT;
-  int dilation_size = 25;
+  int dilation_size = 15;
   Mat element = getStructuringElement( dilation_type, Size( 2*dilation_size + 1, 2*dilation_size+1), Point( dilation_size, dilation_size ) );
-  // Note that one label is the background
   morphologyEx(mask, mask, MORPH_OPEN, element);
   dilate(mask, mask, element);  
 }
@@ -44,8 +43,8 @@ void enveloppe_convexe(Mat mask, Mat & originale){
   for (int i = 0; (unsigned)i < hull.size(); i++){
       for (int j = 0; (unsigned)j < hull[i].size(); j++){
 	  hull_add[0].push_back(hull[i][j]);
-	}
-    }
+      }
+  }
   // create a blank image (black image)
   Mat drawing = Mat::zeros(threshold_output.size(), CV_8UC3);
   vector < vector <Point> > myconvex(1);
@@ -59,8 +58,6 @@ void enveloppe_convexe(Mat mask, Mat & originale){
     drawContours(drawing, hull, i, color, CV_FILLED, 8, vector<Vec4i>(), 0, Point());
   }
   cvtColor(drawing, drawing, COLOR_BGR2GRAY);
-  imshow("filter+convex",drawing);
-  imwrite("filterconvex.png",drawing);
   for (int i = 0; i < originale.rows; i++){
     for (int j = 0; j < originale.cols; j++){
       Vec3b & p = originale.at<Vec3b>(i,j);
@@ -72,7 +69,7 @@ void enveloppe_convexe(Mat mask, Mat & originale){
   }
 }
 
-int process_ims (const char * ims){
+int process_ims (const char * ims, const char * imd){
   milliseconds ms = duration_cast< milliseconds >(system_clock::now().time_since_epoch());  
   Mat image=imread(ims);
   if (!image.data){
@@ -89,44 +86,35 @@ int process_ims (const char * ims){
   Scalar  upper_green = Scalar(60+sensibility, 255, 255);
   Mat mask;
   inRange(hsv, lower_green, upper_green, mask);
-  imshow("before filter", mask);
   filter(mask);  
   enveloppe_convexe(mask, originale);  
-  imshow("final", originale);
+  imwrite(imd, mask);
   milliseconds ms2 = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
   milliseconds c = ms2-ms;
   if (!nb_samples) avg = c;
   else avg = (avg * nb_samples + c)/(nb_samples+1);
   nb_samples++;
-  waitKey(0);  
   return PROCESSED;
 }
 
-void process(const char * folder){
-  for (int i = 1; i <= 1000; i++){
-    char ims[999];
-    if (i < 10)
-      sprintf(ims, "%s/00%d-rgb.png", folder, i);
-    else if (i < 100)
-      sprintf(ims, "%s/0%d-rgb.png", folder, i);
-    else
-      sprintf(ims, "%s/%d-rgb.png", folder, i);
-    if (!process_ims(ims))
-      break;
+void process(const char * ims, const char * imd){
+  if (!process_ims(ims, imd)){
+    cout << "Image not found\n";
+    exit(1);
   }
-  cout << avg.count() << endl;
+  cout << "Avg process time:" << avg.count() << endl;
 }
 
 void usage (const char *s){
-  std::cerr<<"Usage: "<<s<<" folder_path \n"<<std::endl;
+  std::cerr<<"Usage: "<<s<<" <image path> <mask dest> \n"<<std::endl;
   exit(EXIT_FAILURE);
 }
 
-#define param 1
+#define param 2
 int main (int argc, char * argv[]){
   if (argc != (param+1)){
     usage(argv[0]);
   }
-  process(argv[1]);
+  process(argv[1], argv[2]);
   return EXIT_SUCCESS;
 }
