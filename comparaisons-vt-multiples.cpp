@@ -56,29 +56,31 @@ comparaison_vt(float tableau[], Mat image, Mat image_vt)
       for(int j=0;j<image_gray.size().width;j++)
       {
 
-        if(image_vt_gray_float.at<float>(i,j) == 255)
+        if(image_vt_gray_float.at<float>(i,j) > 125)
         {
           nb_pixels_terrain_vt ++;
         }
 
-        if(image_gray_float.at<float>(i,j) == 255)
+        if(image_gray_float.at<float>(i,j)  > 125)
         {
           nb_pixels_terrain_trouve ++;
         }
+        if(image_gray_float.at<float>(i,j)  > 125 && image_vt_gray_float.at<float>(i,j)  > 125)
+        {
+          nb_correct ++;
+        }
 
-        if(image_fp_float.at<float>(i,j) == 255)
+        if(image_gray_float.at<float>(i,j)  > 125 && image_vt_gray_float.at<float>(i,j) <= 125)
         {
           nb_fp ++;
         }
 
-        if(image_fn_float.at<float>(i,j) == 255)
+        if(image_gray_float.at<float>(i,j) <= 125 && image_vt_gray_float.at<float>(i,j)  > 125)
         {
           nb_fn ++;
         }
       }
     }
-
-    nb_correct = nb_pixels_terrain_trouve - nb_fp;
 
     rappel = nb_correct / nb_pixels_terrain_vt;
 
@@ -95,21 +97,20 @@ comparaison_vt(float tableau[], Mat image, Mat image_vt)
     tableau[8] ++;
 
     cout<<"Données quantitatives :" <<endl;
-    cout<<"nb_pixels_tot : " << tableau[0]<<endl;
-    cout<<"nb_fp : " << tableau[1]<<endl;
-    cout<<"nb_fn : " << tableau[2]<<endl;
-    cout<<"nb_pixels_terrain_trouve : " << tableau[3]<<endl;
-    cout<<"nb_pixels_terrain_vt : " << tableau[4]<<endl;
-    cout<<"nb_correct : " << tableau[5]<<endl;
-    cout<<"rappel : " << tableau[6]<<endl;
-    cout<<"precision : " << tableau[7]<<endl;
+    cout<<"nb_pixels_tot : " << nb_pixels_tot<<endl;
+    cout<<"nb_fp : " << nb_fp<<endl;
+    cout<<"nb_fn : " << nb_fn<<endl;
+    cout<<"nb_pixels_terrain_trouve : " << nb_pixels_terrain_trouve<<endl;
+    cout<<"nb_pixels_terrain_vt : " << nb_pixels_terrain_vt<<endl;
+    cout<<"nb_correct : " << nb_correct<<endl;
+    cout<<"rappel : " << rappel<<endl;
+    cout<<"precision : " << precision<<endl;
 
 }
 
 void
-process(const char* dest)
+process(void)
 {
-  (void) dest;
   float tableau[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   Mat image;
@@ -168,13 +169,13 @@ usage (const char *s)
   exit(EXIT_FAILURE);
 }
 
-#define param 1
+#define param 0
 int
 main( int argc, char* argv[] )
 {
   if(argc != (param+1))
     usage(argv[0]);
-  process(argv[1]);
+  process();
   waitKey(0);
   return EXIT_SUCCESS;
 }
