@@ -115,8 +115,8 @@ process(const char* dest)
   Mat image;
   Mat image_vt;
 
-  image = imread("./erosion.png", CV_LOAD_IMAGE_COLOR);
-  image_vt = imread( "./images_vt/log1-vt/212-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
+  image = imread("./filled_region.png", CV_LOAD_IMAGE_COLOR);
+  image_vt = imread( "./images_vt/log1-vt/001-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
 
 
   if(!image.data||!image_vt.data)

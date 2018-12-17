@@ -24,10 +24,10 @@ all: $(BIN)
 .PHONY: algo1
 algo1:
 	./mahalanobis_model_init ../data/log1/001-rgb.png
-	./mahalanobis ../data/log1/212-rgb.png
+	./mahalanobis ../data/log1/001-rgb.png
 	./ero_dil ./mahalanobis.png erosion.png ./croix.png
 	./enveloppe_convex ./erosion.png hull.png
-	./test_vt ../data/log1/212-rgb.png ./hull.png
+	./test_vt ../data/log1/001-rgb.png ./hull.png
 	./enveloppe_convex ./erosion.png convex-hull.png
 	./remplissage_enveloppe_convex ./convex-hull.png filled_region.png
 	./comparaisons-vt-multiples teste
