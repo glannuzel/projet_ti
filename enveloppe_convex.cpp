@@ -11,7 +11,7 @@ using namespace std;
 
 
 void
-process(const char* ims)
+process(const char* ims, const char* imd)
 {
   Mat image;
   image = imread(ims, CV_LOAD_IMAGE_GRAYSCALE);
@@ -73,7 +73,7 @@ process(const char* ims)
   */
 
     imshow("convex",drawing);
-    imwrite("convex-hull.png",drawing);
+    imwrite(imd,drawing);
 }
 
 
@@ -84,13 +84,13 @@ usage (const char *s)
   exit(EXIT_FAILURE);
 }
 
-#define param 1
+#define param 2
 int
 main( int argc, char* argv[] )
 {
   if(argc != (param+1))
     usage(argv[0]);
-  process(argv[1]);
+  process(argv[1], argv[2]);
   waitKey(0);
   return EXIT_SUCCESS;
 }
