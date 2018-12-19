@@ -36,6 +36,7 @@ process(const char* ims, const char* imd)
 
     imshow(imd, mask);
     imwrite(imd, mask);
+
   }
 }
 
