@@ -6,7 +6,7 @@ LDLIBS=\
 	-lopencv_imgproc\
 	-lopencv_highgui
 
-DATA = ../data/log4/60-rgb.png
+DATA = ../data/log1/262-rgb.png
 
 DESTINATION = filled_region.png
 
