@@ -192,7 +192,30 @@ process(char* choix)
   comparaison_vt(tableau, image , image_vt, parImage);
   image = imread("./images_test_algo1/algo1_filled_region_4_60.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log4-vt/60-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
+<<<<<<< HEAD:comparaisons_vt_multiples_algo1.cpp
   comparaison_vt(tableau, image , image_vt, parImage);
+=======
+  comparaison_vt(tableau, image , image_vt);
+<<<<<<< HEAD
+
+
+  image = imread("./filled_region.png", CV_LOAD_IMAGE_COLOR);
+  image_vt = imread( "./images_vt/log1-vt/001-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
+
+
+  if(!image.data||!image_vt.data)
+    {
+        cout <<  "Image not found" << std::endl ;
+    }
+  else
+  {
+    comparaison_vt(tableau, image , image_vt);
+
+  }
+
+=======
+>>>>>>> 5047ec561dbcce71bdae76aa71156384a5159914
+>>>>>>> 3cac3a7e613dc323e116e8633fd59e96dcd7f1d3:comparaisons-vt-multiples.cpp
 
   float nb_pixels_tot_moy(0);
   float nb_fp_moy(0);

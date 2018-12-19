@@ -37,8 +37,8 @@ all: $(BIN)
 .PHONY: algo1
 algo1:
 	./mahalanobis_model_init ../data/log1/001-rgb.png
-	./mahalanobis $(DATA)
-	./ero_dil ./mahalanobis.png erosion.png ./croix.png
+	./mahalanobis $(DATA) 750
+	./ero_dil ./mahalanobis.png erosion.png ./croix.png ./plus.png
 	./enveloppe_convex ./erosion.png hull.png
 	./test_vt $(DATA) ./hull.png
 	./remplissage_enveloppe_convex ./hull.png $(DESTINATION)
