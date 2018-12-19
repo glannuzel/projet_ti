@@ -17,7 +17,6 @@ TAILLEMASQUE = 0
 VT = ./images_vt/log2-vt/231-rgb-vt.png
 
 BIN=\
-	seuil_V0\
 	mahalanobis_model_init\
 	mahalanobis\
 	ero_dil\

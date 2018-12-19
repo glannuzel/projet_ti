@@ -33,9 +33,10 @@ process(const char* ims, const char* imd)
 
     //Dilate to retrieve the pixel left on each side of the convex hull
     dilate(filledEdgesOut,mask,element_struct,Point(-1,-1),1);
-    
+
     imshow(imd, mask);
     imwrite(imd, mask);
+
   }
 }
 
