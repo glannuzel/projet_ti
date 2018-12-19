@@ -29,6 +29,7 @@ BIN=\
 	test_vt\
 	remplissage_enveloppe_convex\
 	terrain_mask\
+	mask_original\
 
 .PHONY: all
 all: $(BIN)
@@ -41,6 +42,7 @@ algo1:
 	./enveloppe_convex ./erosion.png hull.png
 	./test_vt $(DATA) ./hull.png
 	./remplissage_enveloppe_convex ./hull.png $(DESTINATION)
+	./mask_original $(DESTINATION) $(DATA) ./mask_image_originale.png
 
 .PHONY: algo2
 algo2:
