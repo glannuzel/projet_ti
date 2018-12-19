@@ -10,7 +10,7 @@ Module Outils d'imagerie pour la robotique
 
 ## Compiler les programmes
 Utiliser la commande make
-## Exécuter les programmes
+## Exécuter les traitements
 
 ### Algorithme 1
 Ce pipeline prend une image en entrée et retourne le masque de du terrain en utilisant l'algorithme 1 (distance de mahalanobis)
