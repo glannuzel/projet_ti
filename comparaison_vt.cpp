@@ -2,16 +2,13 @@
 #include <cstdlib>
 #include <cmath>
 
+#include <opencv2/opencv.hpp>
+
 using namespace cv;
 using namespace std;
 
-
-/*void
-process(const char* ims, const char* vt)
-{*/
-
 void
-comparaison_vt(float tableau[8][2], int test, char* ims, char* vt)
+process(const char* ims, const char* vt, const char* algo)
 {
 
   Mat image;
@@ -33,13 +30,11 @@ comparaison_vt(float tableau[8][2], int test, char* ims, char* vt)
 
     cvtColor(image, image_gray, CV_BGR2GRAY);
     image_gray.convertTo(image_gray_float, CV_32FC1);
-    imshow(ims,image);
 
     Mat image_vt_gray;
     Mat image_vt_gray_float;
     cvtColor(image_vt, image_vt_gray, CV_BGR2GRAY);
     image_vt_gray.convertTo(image_vt_gray_float, CV_32FC1);
-    imshow(vt,image_vt);
 
     int nb_pixels_tot(0);
     nb_pixels_tot = image.size().height*image.size().width;
@@ -58,7 +53,6 @@ comparaison_vt(float tableau[8][2], int test, char* ims, char* vt)
 
     image_fp = image_gray-image_vt_gray;
     image_fp.convertTo(image_fp_float, CV_32FC1);
-    imshow("Faux positifs", image_fp);
 
     Mat image_fn;
     Mat image_fn_float;
@@ -66,51 +60,43 @@ comparaison_vt(float tableau[8][2], int test, char* ims, char* vt)
     image_fn = image_vt_gray-image_gray;
     image_fn.convertTo(image_fn_float, CV_32FC1);
 
-    imshow("Faux négatifs", image_fn);
 
     for(int i=0;i<image_gray.size().height;i++)
     {
       for(int j=0;j<image_gray.size().width;j++)
       {
 
-        if(image_vt_gray_float.at<float>(i,j) == 255)
+        if(image_vt_gray_float.at<float>(i,j) > 125)
         {
           nb_pixels_terrain_vt ++;
         }
 
-        if(image_gray_float.at<float>(i,j) == 255)
+        if(image_gray_float.at<float>(i,j)  > 125)
         {
           nb_pixels_terrain_trouve ++;
         }
+        if(image_gray_float.at<float>(i,j)  > 125 && image_vt_gray_float.at<float>(i,j)  > 125)
+        {
+          nb_correct ++;
+        }
 
-        if(image_fp_float.at<float>(i,j) == 255)
+        if(image_gray_float.at<float>(i,j)  > 125 && image_vt_gray_float.at<float>(i,j) <= 125)
         {
           nb_fp ++;
         }
 
-        if(image_fn_float.at<float>(i,j) == 255)
+        if(image_gray_float.at<float>(i,j) <= 125 && image_vt_gray_float.at<float>(i,j)  > 125)
         {
           nb_fn ++;
         }
       }
     }
 
-    nb_correct = nb_pixels_terrain_trouve - nb_fp;
-
     rappel = nb_correct / nb_pixels_terrain_vt;
 
     precision = nb_correct / nb_pixels_terrain_trouve;
 
-    tableau[0][test] = nb_pixels_tot;
-    tableau[1][test] = nb_fp;
-    tableau[2][test] = nb_fn;
-    tableau[3][test] = nb_pixels_terrain_trouve;
-    tableau[4][test] = nb_pixels_terrain_vt;
-    tableau[5][test] = nb_correct;
-    tableau[6][test] = rappel;
-    tableau[7][test] = precision;
-
-    cout<<"Données quantitatives :" <<endl;
+    cout<<"Données quantitatives " << algo << " :" <<endl;
     cout<<"nb_pixels_tot : " << nb_pixels_tot<<endl;
     cout<<"nb_fp : " << nb_fp<<endl;
     cout<<"nb_fn : " << nb_fn<<endl;
@@ -124,20 +110,20 @@ comparaison_vt(float tableau[8][2], int test, char* ims, char* vt)
 }
 
 
-/*void
+void
 usage (const char *s)
 {
-  std::cerr<<"Usage: "<<s<<" ims vt\n"<<std::endl;
+  std::cerr<<"Usage: "<<s<<" ims vt algo\n"<<std::endl;
   exit(EXIT_FAILURE);
 }
 
-#define param 2
+#define param 3
 int
 main( int argc, char* argv[] )
 {
   if(argc != (param+1))
     usage(argv[0]);
-  process(argv[1], argv[2]);
+  process(argv[1], argv[2], argv[3] );
   waitKey(0);
   return EXIT_SUCCESS;
-}*/
+}
