@@ -127,7 +127,7 @@ process(const char* imsname, int seuil)
 void
 usage (const char *s)
 {
-  std::cerr<<"Usage: "<<s<<" imsname imsname2 imdname "<<endl;
+  std::cerr<<"Usage: "<<s<<" imsname threshold "<<endl;
   exit(EXIT_FAILURE);
 }
 

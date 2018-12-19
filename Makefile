@@ -35,7 +35,7 @@ all: $(BIN)
 
 .PHONY: algo1
 algo1:
-	./mahalanobis_model_init ../data/log1/001-rgb.png
+	./mahalanobis_model_init ./log1/001-rgb.png
 	./mahalanobis $(DATA) $(SEUIL)
 	./ero_dil ./mahalanobis.png erosion.png ./croix.png ./plus.png
 	./enveloppe_convex ./erosion.png hull.png
@@ -49,6 +49,7 @@ algo2:
 .PHONY: test_image
 test_image:
 	./terrain_mask $(DATA) image_test2.png $(TAILLEMASQUE)
+	./mahalanobis_model_init ./log1/001-rgb.png
 	./mahalanobis $(DATA) $(SEUIL)
 	./ero_dil ./mahalanobis.png erosion.png ./croix.png ./plus.png
 	./enveloppe_convex ./erosion.png hull.png
@@ -91,7 +92,7 @@ test_algo2:
 
 .PHONY: test_algo1
 test_algo1:
-	./mahalanobis_model_init ../data/log1/001-rgb.png
+	./mahalanobis_model_init ./log1/001-rgb.png
 	## Log 1
 	./mahalanobis ../data/log1/001-rgb.png $(SEUIL)
 	./ero_dil ./mahalanobis.png erosion.png ./croix.png ./plus.png

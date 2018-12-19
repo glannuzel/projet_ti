@@ -64,7 +64,7 @@ process(const char* ims, const char* imd, const char* stru1, const char* stru2)
 void
 usage (const char *s)
 {
-  std::cerr<<"Usage: "<<s<<" ims\n"<<std::endl;
+  std::cerr<<"Usage: "<<s<<" ims imd stru_elmt1 stru_elmt2 \n"<<std::endl;
   exit(EXIT_FAILURE);
 }
 
