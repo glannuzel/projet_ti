@@ -13,7 +13,7 @@ process(const char* ims, const char* imd)
 {
   Mat image;
   image = imread(ims, CV_LOAD_IMAGE_COLOR);
-
+  Mat element_struct = imread("plus.png",CV_LOAD_IMAGE_GRAYSCALE);
 
   if(!image.data)
     {
@@ -23,12 +23,14 @@ process(const char* ims, const char* imd)
   {
     Mat edgesIn;
     Mat filledEdgesOut;
+    Mat mask;
     Mat edgesNeg =image.clone();
     cv::floodFill(edgesNeg, cv::Point(0,0), CV_RGB(255,255,255));
     cv::bitwise_not(edgesNeg, edgesNeg);
     filledEdgesOut = (edgesNeg | image);
-    imshow(imd, filledEdgesOut);
-    imwrite(imd, filledEdgesOut);
+    dilate(filledEdgesOut,mask,element_struct,Point(-1,-1),1);
+    imshow(imd, mask);
+    imwrite(imd, mask);
   }
 }
 

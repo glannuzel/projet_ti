@@ -6,7 +6,7 @@ LDLIBS=\
 	-lopencv_imgproc\
 	-lopencv_highgui
 
-DATA= ../data/log4/60-rgb.png
+DATA= ../data/log1/262-rgb.png
 
 BIN=\
 	seuil_V0\
@@ -31,8 +31,8 @@ test:
 .PHONY: algo1
 algo1:
 	./mahalanobis_model_init ../data/log1/001-rgb.png
-	./mahalanobis $(DATA)
-	./ero_dil ./mahalanobis.png erosion.png ./croix.png
+	./mahalanobis $(DATA) 750
+	./ero_dil ./mahalanobis.png erosion.png ./croix.png ./plus.png
 	./enveloppe_convex ./erosion.png hull.png
 	./test_vt $(DATA) ./hull.png
 	./remplissage_enveloppe_convex ./hull.png filled_region_4_60.png
