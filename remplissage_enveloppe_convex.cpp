@@ -13,7 +13,7 @@ process(const char* ims, const char* imd)
 {
   Mat image;
   image = imread(ims, CV_LOAD_IMAGE_COLOR);
-
+  Mat element_struct = imread("plus.png",CV_LOAD_IMAGE_GRAYSCALE);
 
   if(!image.data)
     {
@@ -23,12 +23,20 @@ process(const char* ims, const char* imd)
   {
     Mat edgesIn;
     Mat filledEdgesOut;
+    Mat mask;
     Mat edgesNeg =image.clone();
+
+    //Fill in the convex hull
     cv::floodFill(edgesNeg, cv::Point(0,0), CV_RGB(255,255,255));
     cv::bitwise_not(edgesNeg, edgesNeg);
     filledEdgesOut = (edgesNeg | image);
-    imshow(imd, filledEdgesOut);
-    imwrite(imd, filledEdgesOut);
+
+    //Dilate to retrieve the pixel left on each side of the convex hull
+    dilate(filledEdgesOut,mask,element_struct,Point(-1,-1),1);
+
+    imshow(imd, mask);
+    imwrite(imd, mask);
+
   }
 }
 
@@ -36,7 +44,7 @@ process(const char* ims, const char* imd)
 void
 usage (const char *s)
 {
-  std::cerr<<"Usage: "<<s<<" ims\n"<<std::endl;
+  std::cerr<<"Usage: "<<s<<" ims imd\n"<<std::endl;
   exit(EXIT_FAILURE);
 }
 

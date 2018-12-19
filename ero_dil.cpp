@@ -9,7 +9,7 @@ using namespace std;
 
 
 void
-process(const char* ims, const char* imd, const char* stru)
+process(const char* ims, const char* imd, const char* stru1, const char* stru2)
 {
   //Time calculation init
   clock_t start;
@@ -18,11 +18,13 @@ process(const char* ims, const char* imd, const char* stru)
 
 
   Mat image;
-  Mat stru_elmt;
+  Mat stru_elmt1; Mat stru_elmt2;
 
   image = imread(ims, CV_LOAD_IMAGE_COLOR);
-  stru_elmt = imread(stru, CV_LOAD_IMAGE_COLOR);
-  if(!image.data || !stru_elmt.data)
+  stru_elmt1 = imread(stru1, CV_LOAD_IMAGE_GRAYSCALE);
+  stru_elmt2 = imread(stru2, CV_LOAD_IMAGE_GRAYSCALE);
+
+  if(!image.data || !stru_elmt1.data || !stru_elmt2.data)
     {
         cout <<  "Image not found" << std::endl ;
     }
@@ -31,30 +33,23 @@ process(const char* ims, const char* imd, const char* stru)
 
     Mat image_gray;
     cvtColor(image, image_gray, CV_BGR2GRAY);
-    //imshow("Image grise",image_gray);
 
-    Mat stru_elmt_gray;
-    cvtColor(stru_elmt, stru_elmt_gray, CV_BGR2GRAY);
-
-
+    //Load
+    Mat image_init = image_gray.clone();
     Mat image_dest = image_gray.clone();
-
-    int nb_erosions = 4;
-    erode(image_gray, image_dest, stru_elmt_gray, Point(-1,-1), nb_erosions);
-    //imshow("Image erodee",image_dest);
-
     Mat image_dest2 = image_gray.clone();
 
-    dilate(image_dest, image_dest2, stru_elmt_gray, Point(-1,-1), nb_erosions);
 
+    int nb_erosions1 = 3;
+    int nb_erosions2 = 2;
 
-    //imshow("Image erodee puis dilatee",image_dest2);
+    //Erosion
+    erode(image_gray, image_dest, stru_elmt1, Point(-1,-1), nb_erosions1);
+    erode(image_dest, image_dest2, stru_elmt2, Point(-1,-1), nb_erosions2);
 
-    int nb_dilatation = 4;
-    dilate(image_dest2, image_dest, stru_elmt_gray, Point(-1,-1), nb_dilatation);
-    //imshow("Image re dilatee",image_dest);
-
-    erode(image_dest, image_dest2, stru_elmt_gray, Point(-1,-1), nb_dilatation);
+    //Dilation
+    dilate(image_dest2, image_dest, stru_elmt1, Point(-1,-1), nb_erosions1);
+    dilate(image_dest, image_dest2, stru_elmt2, Point(-1,-1), nb_erosions2);
 
     duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
     cout << "Erosion and dilation time : " << duration << endl;
@@ -69,17 +64,17 @@ process(const char* ims, const char* imd, const char* stru)
 void
 usage (const char *s)
 {
-  std::cerr<<"Usage: "<<s<<" ims\n"<<std::endl;
+  std::cerr<<"Usage: "<<s<<" ims imd stru_elmt1 stru_elmt2 \n"<<std::endl;
   exit(EXIT_FAILURE);
 }
 
-#define param 3
+#define param 4
 int
 main( int argc, char* argv[] )
 {
   if(argc != (param+1))
     usage(argv[0]);
-  process(argv[1], argv[2], argv[3]);
+  process(argv[1], argv[2], argv[3], argv[4]);
   waitKey(0);
   return EXIT_SUCCESS;
 }
