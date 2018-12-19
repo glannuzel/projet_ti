@@ -15,10 +15,15 @@
 using namespace cv;
 using namespace std;
 
-void filter(Mat & mask, int oversize){    
+/*
+  \brief Filter the undesirable objects from the mask
+  \parameter in/out mask the mask
+  \parameter in oversize the size for a structuring element used to dilate the mask (optional). That enables to detect a bit more than the field (to improve recall but lower the precision)
+ */
+void filter(Mat & mask, int oversize = 0){    
   int dilation_type = MORPH_RECT;
   int dilation_size = 25;
-  Mat element = getStructuringElement( dilation_type, Size( 2*dilation_size + 1, 2*dilation_size+1), Point( dilation_size, dilation_size ) );
+  Mat element = getStructuringElement(dilation_type, Size(2*dilation_size + 1, 2*dilation_size+1), Point(dilation_size, dilation_size ) );
   morphologyEx(mask, mask, MORPH_OPEN, element);
   if (oversize){
     dilation_size = oversize;
@@ -27,7 +32,11 @@ void filter(Mat & mask, int oversize){
   }
 }
 
-void enveloppe_convexe(Mat & mask, Mat & originale){
+/**
+   \brief compute a convex hull from the mask. That enables to include some not green objects on the field such as the ball, the players or the lines
+   \parameter in/out mask the mask to compute the convex hull
+ */
+void convex_hull(Mat & mask){
   Mat threshold_output = mask.clone();
   vector< vector<Point> > contours; // list of contour points
   vector<Vec4i> hierarchy;
@@ -44,32 +53,23 @@ void enveloppe_convexe(Mat & mask, Mat & originale){
 	  hull_add[0].push_back(hull[i][j]);
       }
   }
-  // create a blank image (black image)
   Mat drawing = Mat::zeros(threshold_output.size(), CV_8UC3);
   vector < vector <Point> > myconvex(1);
   convexHull(Mat(hull_add[0]), myconvex[0]);
   Scalar color = Scalar(255, 255, 255); // red - color for convex hull
   drawContours(drawing, myconvex, -1, color, CV_FILLED, 8, vector<Vec4i>(), 0, Point());
-  for(int i = 0; (unsigned)i < contours.size(); i++){
-    //Scalar color_contours = Scalar(0, 255, 0); // green - color for contours
-    Scalar color = Scalar(255, 255, 255); // red - color for convex hull
-    // draw with contour
-    drawContours(drawing, hull, i, color, CV_FILLED, 8, vector<Vec4i>(), 0, Point());
-  }
   cvtColor(drawing, drawing, COLOR_BGR2GRAY);
-  for (int i = 0; i < originale.rows; i++){
-    for (int j = 0; j < originale.cols; j++){
-      Vec3b & p = originale.at<Vec3b>(i,j);
-      unsigned char pp = drawing.at<unsigned char>(i,j);
-      if (pp < 100){
-	p = 0;
-      }
-    }
-  }
   mask = drawing;
 }
 
-int process_ims (const char * ims, const char * imd, int oversize){
+/**
+   \brief process an image to obtain a mask of the field
+   \parameter ims the input image
+   \parameter imd the destination path for the mask
+   \parameter oversize optionnal to increase the size of the mask
+   \return PROCESSED if ok, NOT_PROCESSED if not
+ */
+int process_ims (const char * ims, const char * imd, int oversize = 0){
   Mat image=imread(ims);
   if (!image.data){
     return NOT_PROCESSED;
@@ -86,16 +86,9 @@ int process_ims (const char * ims, const char * imd, int oversize){
   Mat mask;
   inRange(hsv, lower_green, upper_green, mask);
   filter(mask, oversize);  
-  enveloppe_convexe(mask, originale);  
+  convex_hull(mask);  
   imwrite(imd, mask);
   return PROCESSED;
-}
-
-void process(const char * ims, const char * imd, int oversize){
-  if (!process_ims(ims, imd, oversize)){
-    cout << "Image not found\n";
-    exit(1);
-  }
 }
 
 void usage (const char *s){
@@ -108,6 +101,7 @@ int main (int argc, char * argv[]){
   if (argc != (param+1)){
     usage(argv[0]);
   }
-  process(argv[1], argv[2], atoi(argv[3]));
-  return EXIT_SUCCESS;
+  if (process_ims(argv[1], argv[2], atoi(argv[3])))
+    return EXIT_SUCCESS;
+  return EXIT_FAILURE;
 }
