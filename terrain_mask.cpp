@@ -27,7 +27,7 @@ void filter(Mat & mask, int oversize){
   }
 }
 
-void enveloppe_convexe(Mat mask, Mat & originale){
+void enveloppe_convexe(Mat & mask, Mat & originale){
   Mat threshold_output = mask.clone();
   vector< vector<Point> > contours; // list of contour points
   vector<Vec4i> hierarchy;
@@ -66,6 +66,7 @@ void enveloppe_convexe(Mat mask, Mat & originale){
       }
     }
   }
+  mask = drawing;
 }
 
 int process_ims (const char * ims, const char * imd, int oversize){
@@ -79,7 +80,7 @@ int process_ims (const char * ims, const char * imd, int oversize){
   Mat image_blur;  
   Mat hsv;
   cvtColor(image, hsv, COLOR_BGR2HSV);
-  int sensibility = 35;
+  int sensibility = 40;
   Scalar lower_green = Scalar(60-sensibility,0,0);
   Scalar  upper_green = Scalar(60+sensibility, 255, 255);
   Mat mask;
