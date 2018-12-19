@@ -14,7 +14,7 @@ MULTIPLE = 1
 
 TAILLEMASQUE = 0
 
-VT = ./images_vt/log2-vt/231-rgb-vt.png
+VT = ./images_vt/log4-vt/60-rgb-vt.png
 
 SEUIL = 750
 
