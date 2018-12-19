@@ -9,7 +9,6 @@ LDLIBS=\
 DATA= ../data/log1/262-rgb.png
 
 BIN=\
-	seuil_V0\
 	mahalanobis_model_init\
 	mahalanobis\
 	ero_dil\
@@ -17,7 +16,6 @@ BIN=\
 	comparaisons-vt-multiples\
 	test_vt\
 	remplissage_enveloppe_convex\
-	make-se\
 	terrain_mask\
 
 

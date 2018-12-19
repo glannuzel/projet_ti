@@ -69,26 +69,16 @@ process(const char* ims, const char* imd)
   duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
   cout << "Union of convex hulls time : " << duration << endl;
 
-  // DRAW CONVEX HULL 
+
+  // DRAW CONVEX HULL
+
   Mat drawing = Mat::zeros(threshold_output.size(), CV_8UC3);
   Scalar color = Scalar(255, 0, 255); // magenta - color for convex hull
   drawContours(drawing, myconvex, -1, color);
 
 
-/*
-  for(int i = 0; (unsigned)i < contours.size(); i++)
-  {
-      Scalar color_contours = Scalar(0, 255, 0); // green - color for contourscontours
-      //Scalar color = Scalar(0, 0, 255); // red - color for convex hull
-      // draw with contour
-      drawContours(drawing, contours, i, color_contours, 1, 8, vector<Vec4i>(), 0, Point());
-      // draw wth convex hull
-      //drawContours(drawing, hull, i, color, 1, 8, vector<Vec4i>(), 0, Point());
-  }
-*/
-
-    imshow("convex",drawing);
-    imwrite(imd,drawing);
+  imshow("convex",drawing);
+  imwrite(imd,drawing);
 }
 
 

@@ -25,10 +25,15 @@ process(const char* ims, const char* imd)
     Mat filledEdgesOut;
     Mat mask;
     Mat edgesNeg =image.clone();
+
+    //Fill in the convex hull
     cv::floodFill(edgesNeg, cv::Point(0,0), CV_RGB(255,255,255));
     cv::bitwise_not(edgesNeg, edgesNeg);
     filledEdgesOut = (edgesNeg | image);
+
+    //Dilate to retrieve the pixel left on each side of the convex hull
     dilate(filledEdgesOut,mask,element_struct,Point(-1,-1),1);
+    
     imshow(imd, mask);
     imwrite(imd, mask);
   }
