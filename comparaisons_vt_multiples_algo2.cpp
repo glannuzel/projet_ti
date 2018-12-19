@@ -8,7 +8,7 @@ using namespace cv;
 using namespace std;
 
 void
-comparaison_vt(float tableau[], Mat image, Mat image_vt)
+comparaison_vt(float tableau[], Mat image, Mat image_vt, int parImage)
 {
 
     Mat image_gray;
@@ -16,13 +16,11 @@ comparaison_vt(float tableau[], Mat image, Mat image_vt)
 
     cvtColor(image, image_gray, CV_BGR2GRAY);
     image_gray.convertTo(image_gray_float, CV_32FC1);
-    imshow("image traite",image);
 
     Mat image_vt_gray;
     Mat image_vt_gray_float;
     cvtColor(image_vt, image_vt_gray, CV_BGR2GRAY);
     image_vt_gray.convertTo(image_vt_gray_float, CV_32FC1);
-    imshow("vt",image_vt);
 
     int nb_pixels_tot(0);
     nb_pixels_tot = image.size().height*image.size().width;
@@ -41,7 +39,6 @@ comparaison_vt(float tableau[], Mat image, Mat image_vt)
 
     image_fp = image_gray-image_vt_gray;
     image_fp.convertTo(image_fp_float, CV_32FC1);
-    imshow("Faux positifs", image_fp);
 
     Mat image_fn;
     Mat image_fn_float;
@@ -49,7 +46,6 @@ comparaison_vt(float tableau[], Mat image, Mat image_vt)
     image_fn = image_vt_gray-image_gray;
     image_fn.convertTo(image_fn_float, CV_32FC1);
 
-    imshow("Faux négatifs", image_fn);
 
     for(int i=0;i<image_gray.size().height;i++)
     {
@@ -96,7 +92,9 @@ comparaison_vt(float tableau[], Mat image, Mat image_vt)
     tableau[7] += precision;
     tableau[8] ++;
 
-    cout<<"Données quantitatives :" <<endl;
+    if (parImage)
+    {
+    cout<<"Données quantitatives de l'image " << tableau[8]<<" :" <<endl;
     cout<<"nb_pixels_tot : " << nb_pixels_tot<<endl;
     cout<<"nb_fp : " << nb_fp<<endl;
     cout<<"nb_fn : " << nb_fn<<endl;
@@ -105,93 +103,96 @@ comparaison_vt(float tableau[], Mat image, Mat image_vt)
     cout<<"nb_correct : " << nb_correct<<endl;
     cout<<"rappel : " << rappel<<endl;
     cout<<"precision : " << precision<<endl;
+  }
 
 }
 
 void
-process(void)
+process(char* choix)
 {
+
+  int parImage = atoi(choix);
   float tableau[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   Mat image;
   Mat image_vt;
 
   // Pour chaque image
-  image = imread("./algo2_filled_region_1_001.png", CV_LOAD_IMAGE_COLOR);
+  image = imread("./images_test_algo2/algo2_filled_region_1_001.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log1-vt/001-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_1_081.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_1_081.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log1-vt/081-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_1_212.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_1_212.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log1-vt/212-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_1_231.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_1_231.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log1-vt/231-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_1_271.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_1_271.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log1-vt/271-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_1_358.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_1_358.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log1-vt/358-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
+  comparaison_vt(tableau, image , image_vt, parImage);
 
-  image = imread("./algo2_filled_region_2_011.png", CV_LOAD_IMAGE_COLOR);
+  image = imread("./images_test_algo2/algo2_filled_region_2_011.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log2-vt/011-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_2_089.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_2_089.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log2-vt/089-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_2_157.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_2_157.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log2-vt/157-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_2_185.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_2_185.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log2-vt/185-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_2_200.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_2_200.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log2-vt/200-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_2_231.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_2_231.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log2-vt/231-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
+  comparaison_vt(tableau, image , image_vt, parImage);
 
-  image = imread("./algo2_filled_region_3_001.png", CV_LOAD_IMAGE_COLOR);
+  image = imread("./images_test_algo2/algo2_filled_region_3_001.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log3-vt/001-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_3_043.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_3_043.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log3-vt/043-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_3_078.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_3_078.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log3-vt/078-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_3_125.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_3_125.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log3-vt/125-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_3_216.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_3_216.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log3-vt/216-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_3_249.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_3_249.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log3-vt/249-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
+  comparaison_vt(tableau, image , image_vt, parImage);
 
-  image = imread("./algo2_filled_region_4_10.png", CV_LOAD_IMAGE_COLOR);
+  image = imread("./images_test_algo2/algo2_filled_region_4_10.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log4-vt/10-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_4_20.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_4_20.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log4-vt/20-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_4_30.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_4_30.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log4-vt/30-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_4_40.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_4_40.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log4-vt/40-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_4_50.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_4_50.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log4-vt/50-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
-  image = imread("./algo2_filled_region_4_60.png", CV_LOAD_IMAGE_COLOR);
+  comparaison_vt(tableau, image , image_vt, parImage);
+  image = imread("./images_test_algo2/algo2_filled_region_4_60.png", CV_LOAD_IMAGE_COLOR);
   image_vt = imread( "./images_vt/log4-vt/60-rgb-vt.png", CV_LOAD_IMAGE_COLOR);
-  comparaison_vt(tableau, image , image_vt);
+  comparaison_vt(tableau, image , image_vt, parImage);
 
   float nb_pixels_tot_moy(0);
   float nb_fp_moy(0);
@@ -227,17 +228,17 @@ process(void)
 void
 usage (const char *s)
 {
-  std::cerr<<"Usage: "<<s<<" ims vt\n"<<std::endl;
+  std::cerr<<"Usage: "<<s<<" parImage\n"<<std::endl;
   exit(EXIT_FAILURE);
 }
 
-#define param 0
+#define param 1
 int
 main( int argc, char* argv[] )
 {
   if(argc != (param+1))
     usage(argv[0]);
-  process();
+  process(argv[1]);
   waitKey(0);
   return EXIT_SUCCESS;
 }
