@@ -48,8 +48,8 @@ process(const char* ims, const char* imd, const char* stru1, const char* stru2)
     erode(image_dest, image_dest2, stru_elmt2, Point(-1,-1), nb_erosions2);
 
     //Dilation
-    dilate(image_dest2, image_dest, stru_elmt1, Point(-1,-1), nb_erosions1);
-    dilate(image_dest, image_dest2, stru_elmt2, Point(-1,-1), nb_erosions2);
+    dilate(image_dest2, image_dest, stru_elmt2, Point(-1,-1), nb_erosions2);
+    dilate(image_dest, image_dest2, stru_elmt1, Point(-1,-1), nb_erosions1);
 
     duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
     cout << "Erosion and dilation time : " << duration << endl;
