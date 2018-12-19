@@ -11,4 +11,10 @@ Module Outils d'imagerie pour la robotique
 
 ## Exécuter les programmes
 
-## Exéctuer les tests
+### Algorithme 1
+Commande: make algo1
+
+### Algorithme 2
+Commande : make algo2
+
+## Exécuter les tests
