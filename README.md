@@ -9,7 +9,7 @@ Module Outils d'imagerie pour la robotique
 * Effie Segas
 
 ## Compiler les programmes
-Utiliser la commande make
+Utiliser la commande `make`
 
 ## Exécuter les traitements
 
