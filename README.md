@@ -1,4 +1,4 @@
-# projet_ti
+# Projet Traitement d'image : détection du terrain
 
 Module Outils d'imagerie pour la robotique
 
@@ -14,11 +14,11 @@ Utiliser la commande make
 ## Exécuter les traitements
 
 ### Algorithme 1
-Ce pipeline prend une image en entrée et retourne le masque du terrain en utilisant l'algorithme 1 (distance de Mahalanobis)
+*Ce pipeline prend une image en entrée et retourne le masque du terrain en utilisant l'algorithme 1 (distance de Mahalanobis)*
 
-COMMANDE : make algo1 DATA="nom_image_a_traiter.png" DESTINATION="nom_enregistrement_image_traitee.png" SEUIL=750
+***COMMANDE*** : `make algo1 DATA="nom_image_a_traiter.png" DESTINATION="nom_enregistrement_image_traitee.png" SEUIL=750`
 
-NECESSAIRE : l'image 001 du dossier log1 qui sera située dans ../data (../data/log1/001-rgb.png)
+NECESSAIRE : l'image 001 du dossier log1 qui est située dans ./log1 (./log1/001-rgb.png)
 
 Arguments :
 
@@ -26,7 +26,7 @@ DATA : image à traiter
 
 DESTINATION : chemin d'enregistrement de l'image traitee
 
-SEUIL : Distance maximum au modèle de Mahalanobis pour considérer un pixel
+SEUIL : Distance maximum au modèle de Mahalanobis pour considérer un pixel comme du terrain à la détection
 
 ### Algorithme 2
 Ce pipeline prend une image en entrée et retourne le masque du terrain en utilisant l'algorithme 2.
