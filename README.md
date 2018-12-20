@@ -8,8 +8,10 @@ Module Outils d'imagerie pour la robotique
 * Yoann Menanteau
 * Effie Segas
 
+
 ## Compiler les programmes
 Utiliser la commande `make`
+
 
 ## Exécuter les traitements
 
@@ -24,9 +26,10 @@ NECESSAIRE : l'image 001 du dossier log1 qui est située dans ./log1 (./log1/001
 
 DATA : image à traiter
 
-DESTINATION : chemin d'enregistrement de l'image traitee
+DESTINATION : chemin d'enregistrement de l'image traitée
 
-SEUIL : Distance maximum au modèle de Mahalanobis pour considérer un pixel comme du terrain à la détection
+SEUIL : Distance maximum au modèle de Mahalanobis pour considérer un pixel comme du terrain lors de la détection
+
 
 ### Algorithme 2
 *Ce pipeline prend une image en entrée et retourne le masque du terrain en utilisant l'algorithme 2.*
@@ -37,9 +40,10 @@ SEUIL : Distance maximum au modèle de Mahalanobis pour considérer un pixel com
 
 DATA : image à traiter
 
-DESTINATION : chemin d'enregistrement de l'image traitee
+DESTINATION : chemin d'enregistrement de l'image traitée
 
 TAILLEMASQUE : augmente la taille du masque de dilatation une fois le masque du terrain obtenu pour assurer un recouvrement du terrain (défini à 0 de base, plus il est grand plus le rappel sera élevé mais la précision faible)
+
 
 ## Exécuter les tests
 
@@ -78,6 +82,7 @@ MULTIPLE : si 1 > affiche les résultats quantitatifs pour chaque image ainsi qu
            si 0 > affiche uniquement les résultats globaux
 
 SEUIL : Distance maximum au modèle de Mahalanobis pour considérer un pixel           
+
 
 ### Tests algorithme 2
 
