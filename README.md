@@ -8,6 +8,10 @@ Module Outils d'imagerie pour la robotique
 * Yoann Menanteau
 * Effie Segas
 
+**Outils employés :**
+L'ensemble du code a été réalisé dans le langage C.
+Les traitements sont réalisés grâce à la bibliothèque OpenCV (version 2), qui est donc nécessaire pour utiliser les programmes.
+
 
 ## Compiler les programmes
 Utiliser la commande `make`
