@@ -94,6 +94,7 @@ process(const char* imsname, int seuil)
 
       //initialize clock for processing time measurement
       start = clock();
+      Mat binary_image = Mat::zeros(rows,cols,CV_8UC1);
       //A good threshold = 750;
       for (int i=0; i<rows; i++)
       {
@@ -101,10 +102,10 @@ process(const char* imsname, int seuil)
         {
           if(mahalanobis_mat.at<float>(i,j) <=seuil)
           {
-            mahalanobis_mat.at<float>(i,j) = 255;
+            binary_image.at<uchar>(i,j) = 255;
           }
           else{
-            mahalanobis_mat.at<float>(i,j) = 0;
+            binary_image.at<uchar>(i,j) = 0;
           }
         }
       }
@@ -113,10 +114,30 @@ process(const char* imsname, int seuil)
       duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
       cout << "Thresholding and binarization : " << duration << endl;
 
-      imshow("Binarisation Mahalanobis", mahalanobis_mat);
+      imshow("Binarisation Mahalanobis", binary_image);
       waitKey(0);
 
-      imwrite("mahalanobis.png",mahalanobis_mat);
+
+      //FILL IN HOLES (lines, balloon)
+
+      //initialize clock for processing time measurement
+      start = clock();
+      Mat mahal_neg = binary_image.clone();
+      floodFill(mahal_neg, cv::Point(0,0), Scalar(255));
+      Mat mahal_neg_inv;
+      bitwise_not(mahal_neg, mahal_neg_inv);
+      binary_image = (binary_image | mahal_neg_inv);
+
+      duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+      cout << "Fill in time : " << duration << endl;
+
+/*
+      int dilation_type = MORPH_RECT;
+      int dilation_size = 4;
+      Mat element = getStructuringElement(dilation_type, Size(2*dilation_size + 1, 2*dilation_size+1), Point(dilation_size, dilation_size ) );
+      morphologyEx(binary_image, binary_image, MORPH_OPEN, element);
+*/
+      imwrite("mahalanobis.png",binary_image);
 
   }
   else

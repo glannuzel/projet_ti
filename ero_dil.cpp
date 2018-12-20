@@ -40,8 +40,8 @@ process(const char* ims, const char* imd, const char* stru1, const char* stru2)
     Mat image_dest2 = image_gray.clone();
 
 
-    int nb_erosions1 = 3;
-    int nb_erosions2 = 2;
+    int nb_erosions1 = 5;
+    int nb_erosions2 = 1;
 
     //Erosion
     erode(image_gray, image_dest, stru_elmt1, Point(-1,-1), nb_erosions1);
